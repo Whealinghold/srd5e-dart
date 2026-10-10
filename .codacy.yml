@@ -1,0 +1,5 @@
+---
+exclude_paths:
+  - "data/**"
+  - "lib/src/content/data/**"
+  - "test/**"
