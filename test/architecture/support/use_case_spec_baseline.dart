@@ -1,0 +1,61 @@
+/// Use-case specs that do not yet have the FR-031 / FR-034 / FR-051 test-plan
+/// rows (or a "calls no port" statement) that
+/// `doc/specs/errors-and-results.md` FR-053 requires.
+///
+/// FR-053 asks each such spec to add the rows; specs are not edited by the
+/// stage that implements the check. The real-repository test is therefore a
+/// ratchet: a use-case spec outside this set that lacks the rows fails, and a
+/// spec in this set that now conforms fails until it is removed from here.
+/// Delete this file once the list is empty.
+const Set<String> useCaseSpecsMissingErrorRows = {
+  'attacks.md',
+  'casting-and-concentration.md',
+  'character-aggregate.md',
+  'character-creation.md',
+  'class-barbarian.md',
+  'class-bard.md',
+  'class-cleric.md',
+  'class-fighter.md',
+  'class-monk.md',
+  'class-paladin.md',
+  'class-ranger.md',
+  'class-sorcerer.md',
+  'class-warlock.md',
+  'class-wizard-evoker.md',
+  'class-wizard.md',
+  'combat-action-resolution.md',
+  'combat-foundations.md',
+  'conditions.md',
+  'content-classes.md',
+  'content-equipment.md',
+  'content-magic-items.md',
+  'content-schema-and-decoder.md',
+  'content-thin-slice.md',
+  'derived-stats.md',
+  'encounter-aggregate.md',
+  'environment-hazards-and-objects.md',
+  'feats-behaviour.md',
+  'grappling.md',
+  'heroic-inspiration.md',
+  'higher-level-start-equipment-and-trinkets.md',
+  'initiative-and-actions.md',
+  'level-advancement-and-multiclassing.md',
+  'magic-item-rules.md',
+  'magical-effects.md',
+  'monster-limited-use.md',
+  'mounted-and-underwater-combat.md',
+  'resolve-d20-test-use-case.md',
+  'rests-and-hit-dice.md',
+  'social-interaction.md',
+  'spell-effects.md',
+  'spellcasting.md',
+  'toolbox-combat-encounter-difficulty.md',
+  'toolbox-curses-and-contagions.md',
+  'toolbox-environmental-effects.md',
+  'toolbox-fear-and-mental-stress.md',
+  'toolbox-hazard-effects.md',
+  'toolbox-poison.md',
+  'toolbox-traps.md',
+  'toolbox-travel-pace.md',
+  'weapon-properties-and-mastery.md',
+};

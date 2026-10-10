@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart analyze --fatal-infos
+      - run: dart run coverage:test_with_coverage -- --test-randomize-ordering-seed=random
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+      - run: dart pub publish --dry-run
+
+  # Mutation testing (doc/rules/testing.md section 8). Separate from `check`
+  # so a slow or flaky run cannot block format, analyze and tests. Pull
+  # requests only, read-only token, no secrets. mutate4dart 0.12.2 accepts
+  # several paths in one run, so no matrix is needed; add each future
+  # domain/ directory to the path list below.
+  mutation:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - run: dart pub global activate mutate4dart 0.12.2
+      - run: dart run coverage:test_with_coverage
+      - name: Mutation test changed lines
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: >-
+          dart pub global run mutate4dart
+          lib/src/shared_kernel lib/src/shared_ports
+          --diff-base "origin/$BASE_REF" --threshold 80 --jobs 2

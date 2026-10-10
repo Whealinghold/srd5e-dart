@@ -1,0 +1,5 @@
+# Contributor and agent files; not part of the published package.
+AGENTS.md
+CLAUDE.md
+.github/
+doc/

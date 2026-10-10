@@ -1,0 +1,7 @@
+.dart_tool/
+.packages
+build/
+coverage/
+# Libraries do not commit their lockfile.
+pubspec.lock
+.mutate4dart/
