@@ -304,6 +304,7 @@ Result values (`srd5e.combat.result`): `summon_creature`: `summoned`, `form_chan
 | FR-065 to FR-069 | unit | Immutability, determinism, `ArgumentError` list, Table R pairs, event kinds unique and snake_case, `combatants` rules |
 | FR-070 to FR-076 | application, architecture | `SummonCreature` with `FakeContentSource` (found, missing, throws); `ApplySummonedChange` per variant; telemetry with recording `Observability` (counters, span, once-only errors, no log, no-op equality); architecture scan: no use case call, no import of a non-barrel file |
 | scenario | scenario | Through `srd5e.dart`: summon Giant Insect, place after summoner, command, drop to 0, depart; Animate Dead lapse and reassert; familiar dismiss and recall |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The `ContentSourceException` of FR-071 propagates unchanged with no log; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 Doubles: `FakeContentSource`, recording `Observability`. No new contract suite. Mutation testing: `lib/src/combat/domain/summoned/` (threshold 80, `testing.md` §8). Every FR appears above; FR-028 and FR-059 are in the Withdrawn ids table.
 

@@ -441,6 +441,7 @@ scenario. Fixtures are built from table Z with hand-made `ZoneFacts` (the bundle
 | FR-050 | architecture, unit | Each `kind` constant unique in the package; `combatants` order |
 | FR-052, FR-053 | unit | Inputs unchanged; equal results for equal inputs; each result classified as section 7 states |
 | FR-054 | scenario | `test/scenarios/`, public API only: Spirit Guardians cast; C ends turn, X enters on C's turn then ends its own turn; `assess` returns two due effects; each goes to `ResolveSpellEffects` (RA-2) and `ApplyDamage`; final Hit Points asserted (deferred until RA-2 lands) |
+| errors-and-results.md FR-031, FR-034, FR-051 | unit | n/a — the spec's operations call no port: there is no `DiceRoller` or `ContentSource` (the host reports events, moves and damage figures), so there is no port failure to propagate or record. |
 
 - **Levels:** unit, architecture, one scenario. No contract suite (no port).
 - **Mutation testing** (`doc/rules/testing.md` §8): changed lines in `lib/src/combat/domain/`

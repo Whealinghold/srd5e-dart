@@ -373,6 +373,7 @@ Unit for domain rules (`test/character/domain/`), application for the six use ca
 | FR-050 to FR-056 | unit | `UnsupportedError` on every collection; value equality; inputs unchanged; table O; `ArgumentError`; determinism; event family exhaustive switch |
 | FR-060 to FR-066 | application | Recording `Observability`: span names, attributes, one counter and one histogram per call, no log, `outcome` only `success` or `failure`, failures recorded once, rejection not an error status; throwing roller and source propagate; identical results with the no-op; no `application/` file imports another use case |
 | (architecture) | architecture | `domain/` imports only `content`, `d20_test`, `shared_kernel`, own context; no duplicate exported name (`SpeciesUseExpended`, `SpeciesWindow`, `DraconicAncestry`, `TemporaryHitPointsGrant`, the effect field types); signal constants match `doc/observability/signals.md` |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The throwing roller and source of FR-060 to FR-062 propagate unchanged; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 Doubles: `FakeContentSource`, `FixedDiceRoller`, `RecordingObservability` (`lib/testing.dart`). A scenario test (a level 5 Dragonborn
 uses Breath Weapon, rests, regains it) is recommended once character creation exists. Mutation testing: every changed `domain/` file,

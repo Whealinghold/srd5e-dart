@@ -49,4 +49,5 @@ jobs:
         run: >-
           dart pub global run mutate4dart
           lib/src/shared_kernel lib/src/shared_ports
+          lib/src/d20_test/domain
           --diff-base "origin/$BASE_REF" --threshold 80 --jobs 2

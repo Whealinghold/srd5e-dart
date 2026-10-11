@@ -44,7 +44,6 @@ const Set<String> useCaseSpecsMissingErrorRows = {
   'magical-effects.md',
   'monster-limited-use.md',
   'mounted-and-underwater-combat.md',
-  'resolve-d20-test-use-case.md',
   'rests-and-hit-dice.md',
   'social-interaction.md',
   'spell-effects.md',

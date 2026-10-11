@@ -214,6 +214,8 @@ Rules:
   `ability_check`, `saving_throw` or `attack_roll`;
   `srd5e.d20_test.roll_mode` is `normal`, `advantage` or `disadvantage`;
   `srd5e.d20_test.critical_hit` is `true` or `false` (attack rolls only);
+  `srd5e.d20_test.roller_failure` is `unavailable` or `invalid_result`;
+  `srd5e.d20_test.forced_failure_reason` is `chosen_to_fail` or `automatic`;
   `error.type` is one constant per `Srd5eException` subtype, the snake_case of
   the subtype name, defined in `errors-and-results.md`, and is set only for a
   thrown subtype, never for a returned failure result. A new value for an
@@ -416,7 +418,7 @@ fully automated; they are enforced in review (§2).
 
 ## Read receipt
 
-RULE-TAG: `observability-3d56b346743e`
+RULE-TAG: `observability-7c1f49d2e08a`
 
 This tag proves you read this document in this session. Quote it verbatim as
 required by `AGENTS.md`. Do not copy it anywhere else. Whoever edits this

@@ -178,6 +178,8 @@ void main() {
         'srd5e.d20_test.kind': {'ability_check', 'saving_throw', 'attack_roll'},
         'srd5e.d20_test.roll_mode': {'normal', 'advantage', 'disadvantage'},
         'srd5e.d20_test.critical_hit': {'true', 'false'},
+        'srd5e.d20_test.roller_failure': {'unavailable', 'invalid_result'},
+        'srd5e.d20_test.forced_failure_reason': {'chosen_to_fail', 'automatic'},
       });
     });
 
@@ -599,17 +601,27 @@ void main() {
         expect(backticked(hardConstraints), containsAll(dependencyAllowlist));
       });
 
-      /// Requirement: doc/specs/architecture-guardrails.md FR-002 - the
-      ///   excluded directories and files are backticked in the FR-002 row.
+      /// Requirement: doc/specs/architecture-guardrails.md FR-002 and FR-105 -
+      ///   the excluded directories and files are backticked in the FR-002
+      ///   row, and FR-105's `.zcode/` extension in the FR-105 row.
       /// Path: unhappy (state error)
       test('excluded paths appear in the FR-002 row', () {
+        // FR-105: the directories its extension adds to FR-002's list.
+        const fr105Directories = {'.zcode'};
         final tokens = backticked(rowOf(guardrails, 'FR-002'));
 
         expect(
           tokens,
-          containsAll({for (final d in excludedDirectories) '$d/'}),
+          containsAll({
+            for (final d in excludedDirectories.difference(fr105Directories))
+              '$d/',
+          }),
         );
         expect(tokens, containsAll(excludedFiles));
+        expect(
+          backticked(rowOf(guardrails, 'FR-105')),
+          containsAll({for (final d in fr105Directories) '$d/'}),
+        );
       });
 
       /// Requirement: doc/specs/architecture-guardrails.md FR-026 - the

@@ -5,7 +5,7 @@
 | Status | draft |
 | Context | `content` |
 | Roadmap phase | Types 2; bulk data 5 |
-| Depends on | `errors-and-results.md`, `content-schema-and-decoder.md`, `content-source-port.md`, `spell-effect-data.md` |
+| Depends on | `errors-and-results.md`, `content-schema-and-decoder.md`, `content-source-port.md` |
 
 Phase rule: shared-types-and-ownership.md FR-014; see [../roadmap.md](../roadmap.md). content-thin-slice.md (same rank) is cited in prose only (FR-094), not a dependency.
 

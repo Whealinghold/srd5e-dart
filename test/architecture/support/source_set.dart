@@ -30,6 +30,7 @@ final class SourceSet {
     '.mutate4dart',
     '.idea',
     '.vscode',
+    '.zcode', // FR-105: machine-owned agent/workflow tooling state, not repository source
   };
 
   /// File names that are never part of a snapshot.

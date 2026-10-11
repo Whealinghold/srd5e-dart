@@ -294,6 +294,7 @@ The seven questions (`doc/rules/observability.md` §2):
 | FR-043 to FR-052 | unit | Table T-A and table T-B, one test per row; suppressed spell loses time and resumes; artifact origin; nothing returned for FR-050 (documented exclusion, no test) |
 | FR-053 to FR-057 | architecture | Import direction (no `character` service, no `toolbox`); `SpellEndingEvent` sealed, `kind` unique; barrel scan for generic variant names; class of each variant |
 | Scenario | scenario | Public API only: Dispel Magic at slot 3 on a creature with a level 2 buff, a level 5 buff and a Forcecage; Counterspell on a Concentration cast; a spell expiring inside an Antimagic Field |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The use cases' `DiceRoller` failure propagates unchanged with no partial result; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 No doubles or contract suites. Mutation testing (`doc/rules/testing.md` §8): all changed `domain/` lines, with `castLevel` versus spell level, the DC of 10, the 60 feet and 6 seconds per round as the boundary mutants to kill.
 

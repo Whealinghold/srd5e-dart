@@ -24,10 +24,12 @@ replace its tag with a fresh random value; new rule files go on this list.
 - **No consumer-specific code.** Nothing may reference any consuming
   project. If a consumer needs something, expose a general extension point
   instead. The one exception is the `repository` URL in `pubspec.yaml`, which
-  is where this repo is hosted. It is not a code dependency, and nothing else
-  may name the organisation. (The split-fragment denylist in
-  `test/architecture/support/constants.dart` names consumers only so the rule
-  can be enforced; the architecture scan exempts it.)
+  is where this repo is hosted: the `whealinghold` GitHub organisation. It is
+  not a code dependency, and nothing else may name the organisation (this
+  file and the `repository` line are the only places the name may appear).
+  (The split-fragment denylist in `test/architecture/support/constants.dart`
+  names consumers — today only the hosting organisation, `whealinghold` —
+  so the rule can be enforced; the architecture scan exempts it.)
 - **Pure Dart.** No `flutter`, `dart:ui`, or other framework dependencies.
 - **Public API only via the entry points** `lib/srd5e.dart`,
   `lib/adapters.dart` and `lib/testing.dart`. Implementation lives in
