@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 
+import '../../shared_kernel/ability/ability.dart';
 import '../../shared_kernel/dice/dice_expression.dart';
 import '../../shared_kernel/dice/die.dart';
 import '../../shared_kernel/roll_circumstance.dart';
@@ -15,6 +16,7 @@ import '../domain/d20_roll.dart';
 import '../domain/d20_test_kind.dart';
 import '../domain/d20_test_outcome.dart';
 import '../domain/d20_test_resolver.dart';
+import '../domain/difficulty_class.dart';
 import '../domain/forced_failure_reason.dart';
 import '../domain/roll_modifiers.dart';
 import 'd20_test_attempts.dart';
@@ -167,16 +169,12 @@ final class ResolveD20Test {
   ResolveD20TestResult _resolve(D20TestCommand command) => switch (command) {
     AbilityCheckCommand(:final ability, :final target, :final attempt) =>
       switch (attempt) {
-        RollAttempt(:final modifiers, :final circumstances) =>
-          ResolveD20TestRolledCheck(
-            ability,
-            result: _resolver.resolveCheck(
-              D20TestKind.abilityCheck,
-              _rolled(circumstances),
-              modifiers,
-              target,
-            ),
-          ),
+        RollAttempt() => _rolledCheck(
+          ability,
+          D20TestKind.abilityCheck,
+          attempt,
+          target,
+        ),
         AutomaticFailure() => ResolveD20TestForcedFailure(
           ability,
           result: _resolver.forcedFailure(
@@ -188,16 +186,12 @@ final class ResolveD20Test {
       },
     SavingThrowCommand(:final ability, :final target, :final attempt) =>
       switch (attempt) {
-        RollAttempt(:final modifiers, :final circumstances) =>
-          ResolveD20TestRolledCheck(
-            ability,
-            result: _resolver.resolveCheck(
-              D20TestKind.savingThrow,
-              _rolled(circumstances),
-              modifiers,
-              target,
-            ),
-          ),
+        RollAttempt() => _rolledCheck(
+          ability,
+          D20TestKind.savingThrow,
+          attempt,
+          target,
+        ),
         ChooseToFail() => ResolveD20TestForcedFailure(
           ability,
           result: _resolver.forcedFailure(
@@ -239,6 +233,24 @@ final class ResolveD20Test {
       dice: [for (final dieRoll in rolled.rolls) dieRoll.value],
     );
   }
+
+  /// The rolled check or save of [kind]: the shared shape of the two command
+  /// variants (FR-058c). Their attempt types and validation stay distinct;
+  /// only the resolver call is shared.
+  ResolveD20TestRolledCheck _rolledCheck(
+    Ability ability,
+    D20TestKind kind,
+    RollAttempt attempt,
+    DifficultyClass target,
+  ) => ResolveD20TestRolledCheck(
+    ability,
+    result: _resolver.resolveCheck(
+      kind,
+      _rolled(attempt.circumstances),
+      attempt.modifiers,
+      target,
+    ),
+  );
 
   /// Records the outcome on the span and the meter, then counts the resolved
   /// call with the span's attributes. A failed check or a missed attack is a

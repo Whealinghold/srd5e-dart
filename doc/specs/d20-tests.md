@@ -129,7 +129,7 @@ modifiers-and-advantage.md.
 
 | Id | Requirement | Source | Path |
 |---|---|---|---|
-| FR-009 | A `D20Roll` MUST reject any die value outside 1 to 20 with `ArgumentError`, at construction and in `replaceDie` (FR-012, FR-014). At construction the range check is the kernel's `RollMode.select` behaviour (modifiers-and-advantage.md FR-027), not reimplemented; `replaceDie` pre-validates `value` itself (FR-014). | SRD 5.2.1, "Roll 1d20", p. 6 | unhappy (invalid input) |
+| FR-009 | A `D20Roll` MUST reject any die value outside 1 to 20 with `ArgumentError`, at construction and in `replaceDie` (FR-012, FR-014). At construction `D20Roll` pre-validates the count and the range itself, with `name` `dice`, before `RollMode.select` runs (decision D-23: re-throwing the kernel error would mean catching an `Error`, which the guardrails forbid); `select` stays the sole authority for `natural` and `keptIndex` (FR-011, FR-058). `replaceDie` pre-validates `value` itself (FR-014). | SRD 5.2.1, "Roll 1d20", p. 6 | unhappy (invalid input) |
 | FR-010 | A `D20Roll` MUST hold exactly `mode.diceCount` dice: one for `normal`, two for `advantage` and `disadvantage`. Any other count throws `ArgumentError` (modifiers-and-advantage.md FR-026). | SRD 5.2.1, "Roll Two D20s", "They Don't Stack", p. 8 | unhappy (invalid input) |
 | FR-011 | `D20Roll.natural` MUST be the number `RollMode.select` returns: the higher die under `advantage`, the lower under `disadvantage`, the only die under `normal`. Both dice stay visible in `D20Roll.dice`. Equal dice give that value (modifiers-and-advantage.md FR-021 to FR-025). | SRD 5.2.1, "Roll Two D20s", p. 8 | happy; unhappy (boundary) at equal dice |
 
@@ -148,7 +148,7 @@ type.
 |---|---|---|---|
 | FR-012 | `D20Roll.replaceDie(index, value)` MUST return a new `D20Roll` with the die at `index` set to `value`, the same `mode`, and `natural` re-selected with `RollMode.select`. Example: dice `[18, 3]` under advantage, replace index 0 with 2, gives dice `[2, 3]` and natural 3. | SRD 5.2.1, "Interactions with Rerolls", p. 8 | happy |
 | FR-013 | A single `replaceDie` call MUST change exactly one die: every other die keeps its value, in its position. | SRD 5.2.1, "Interactions with Rerolls", p. 8 ("only one die, not both") | unhappy (rule interaction) |
-| FR-014 | `replaceDie` MUST validate `index` and `value` itself: an index outside `0` to `dice.length - 1` (negative, equal to the length, or any index under `normal` other than 0) or a value outside 1 to 20 MUST throw `ArgumentError` (name `index` or `value`). The constructor instead re-throws the kernel's `select` error under name `dice`. | `doc/rules/testing.md` §4 | unhappy (invalid input) |
+| FR-014 | `replaceDie` MUST validate `index` and `value` itself: an index outside `0` to `dice.length - 1` (negative, equal to the length, or any index under `normal` other than 0) or a value outside 1 to 20 MUST throw `ArgumentError` (name `index` or `value`). The constructor pre-validates count and range with its own check under name `dice` (decision D-23); it does not catch and re-throw the kernel's `select` error. | `doc/rules/testing.md` §4 | unhappy (invalid input) |
 | FR-015 | `replaceDie` and `applyReroll` MUST NOT alter the original `D20Roll`; the original's `dice`, `natural` and `keptIndex` are unchanged, and `dice` is unmodifiable (`UnsupportedError` on mutation). | `doc/rules/architecture.md` §3 | unhappy (immutability) |
 | FR-055 | A `D20Roll` built from a mode and the face values in the order rolled MUST select its `natural` with the kernel `RollMode.select`. `[18, 3]` under advantage gives natural 18, kept index 0; under disadvantage, natural 3, kept index 1. | SRD 5.2.1, "Roll Two D20s", p. 8; modifiers-and-advantage.md FR-021 to FR-023 | happy |
 | FR-058 | `D20Roll.keptIndex` MUST be the index of the kept die: the first index whose value equals `natural`. For equal dice that is index 0. After `replaceDie` it is recomputed. | SRD 5.2.1, "Roll Two D20s", p. 8; package design (D-15) | unhappy (boundary: equal dice) |
@@ -591,9 +591,9 @@ No open questions. Settled decisions cited elsewhere:
   errors-and-results.md FR-030 and FR-046 (check E4) forbid. `select` stays the
   sole authority for which die is kept (FR-009's first sentence and the table
   rows are unaffected: the error type, the name and the `invalidValue` are as
-  the tables pin them). The mechanism sentence of FR-009 and FR-014 keeps its
-  original wording; this decision records what the implemented code does and
-  why.
+  the tables pin them). The mechanism sentences of FR-009 and FR-014 were
+  reconciled to this behaviour in the same change that marked the spec
+  implemented; the observable contract never changed.
 
 ## 10. Changelog impact
 
