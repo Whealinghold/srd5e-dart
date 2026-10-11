@@ -248,6 +248,7 @@ Doubles: `FixedDiceRoller`, `CallbackDiceRoller`, the recording and no-op `Obser
 | FR-074, FR-075 | application | `DiceRollerException` propagates (same instance); wrong expression gives `invalidResult`; inputs unchanged; equal inputs equal results |
 | FR-076 | application | Span per use case, one `operations`, `operation_duration`, per-event `events`; item attribute on the span and `operations` only; refused is `failure` without error status; equal results with no-op |
 | (scenario) | scenario | Public API only: a Fighter's Attack action replaced by Alchemist's Fire (replacement recorded, DC 13, failed save, 1d4 Fire through `ApplyDamage`, Burning, `RollBurningDamage`); Basic Poison on three arrows, one hits (spent) and the other two expire after 1 minute; a Dying ally stabilized by a Healer's Kit then healed by a Potion of Healing |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The typed roller failure of FR-074 propagates unchanged as the same instance; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 Mutation testing (`doc/rules/testing.md` §8): all `domain/item_use` lines with `mutate4dart`, score at least 80, watching `<` against `<=` at the 5-foot, range, 1-minute, 1-hour and `damageTaken` 1 boundaries and the `8 +` in the DC. Every FR id appears above; none is deliberately uncovered.
 

@@ -302,6 +302,7 @@ Doubles: the fixed `DiceRoller` and the recording `Observability` from `testing.
 | FR-075 | application | no use case imports a roller for damage; every damage is a `ContainmentDamageDue` |
 | FR-076, FR-077 | public API | a test importing only `package:srd5e/srd5e.dart` builds each command and switches exhaustively over every result and event; barrel scan for unique names; exactly two reason enums |
 | scenario | scenario | public API only: a Purple Worm Grapples a fighter, `EnterContainer` fails the save, the host applies damage each start of turn, the fighter deals 31 damage in one turn, `ResolveRegurgitation` fails and releases it Prone; a second scenario kills a Behir and the occupant uses `EscapedCorpse`; a third runs a cube Engulf, a failed pull and a successful pull with puller damage |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The roller failure of FR-071 propagates unchanged and is recorded once; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 - **Mutation testing:** `lib/src/combat/domain/containment`, `--threshold 80` (`doc/rules/testing.md` section 8). The boundary rows (threshold 29/30, capacity edges, movement equal or one short) kill comparison mutants; the rejection-order tests kill order mutants; the two-occupant 20+20 row kills a sum-versus-per-creature mutant.
 - **Not covered:** none. Every FR id appears above.

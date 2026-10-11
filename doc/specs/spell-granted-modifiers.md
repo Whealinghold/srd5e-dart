@@ -312,6 +312,7 @@ Entries feed `doc/observability/signals.md`; the two `result` values are added t
 | FR-070, FR-071 | unit | Facts listed per entry, coverage `partial`; numeric results identical with and without facts. |
 | FR-080 to FR-084 | architecture | Folder and import rules (domain imports no `application/`, no use case, no `ConditionEffects`); barrel scan for duplicate and generic names; catalogue pin test per table C row; value equality, unmodifiable collections, `ArgumentError` cases. |
 | FR-090 to FR-092 | application | Recording `Observability` through `CombatTelemetry`: one span, one `operations` increment with result `rolled` or `nothing_to_roll`, one duration; error counted once and not logged; no `events`; identical result with the no-op. |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The `DiceRollerException` of FR-035 propagates with no partial result; the recorded failure's `error.type` is the exception's `errorType` getter (FR-091); a leaked non-`Srd5eException` propagates uncounted. |
 
 - **Levels:** unit (`test/combat/domain/`), application (`test/combat/application/`), architecture, one scenario. No contract suite (no port).
 - **Doubles:** `FixedDiceRoller`, the recording `Observability`, the real `D20TestResolver`, `MovementSpeeds` and damage pipeline. No mocks of the domain.

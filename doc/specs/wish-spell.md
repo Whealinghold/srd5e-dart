@@ -265,6 +265,7 @@ Doubles: the fixed `DiceRoller` (including one that throws `DiceRollerException`
 | FR-066 | application | Span, counter and duration keys pinned for both use cases; rejection is `failure` without error status; thrown failure is recorded once with `error.type`; recording and no-op `Observability` give equal results |
 | FR-067 | architecture | Barrel scan: every named type exported, no generic name; no `combat` import (`test/architecture/`) |
 | scenario | scenario | `test/scenarios/wish_test.dart`, public API: a Wizard 17 casts Wish for Reshape Reality, is stressed, casts a level 3 spell (3d10 handoff), rests two days, finishes a Long Rest; a Cleric 20 duplicates a level 8 spell without stress. Cites FR-004, FR-022, FR-041, FR-050, FR-052 |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The `DiceRollerException` of FR-064 propagates unchanged from both use cases with the state equal; the thrown failure recorded once (FR-066) sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 - Not covered: none.
 - Mutation testing: `lib/src/character/domain` Wish files (`doc/rules/testing.md` §8, `--diff-base main --threshold 80 --jobs 2`); the 33 and 34 percentile rows and the 8, 20, 10 and 300 limits kill boundary mutants. Use cases SHOULD be mutation tested too.

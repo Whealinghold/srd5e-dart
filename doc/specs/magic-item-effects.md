@@ -382,6 +382,7 @@ The shared counter's `srd5e.character.operation` gains `roll_potion_healing`, `r
 | FR-057 to FR-065 | unit | Tables "Extradimensional spaces" and "Nesting and load cases", every row; every ordered pair of the four space kinds for nesting (16, including the three same-kind pairs, each with its gate area); load one ounce and one cubic inch over; air for 0, 1, 3, 7 creatures; weight variants. |
 | FR-066, FR-067 | application | Same results with no-op and recording `Observability`; one span and one counter increment per call; `srd5e.outcome` only `success` or `failure`; no log. |
 | FR-068 to FR-070 | architecture | Sealed event family and exact members; barrel scan for names and prefixes; no `combat` import under `lib/src/character/`; no use case mentions another. |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | A throwing roller propagates its typed `Srd5eException` unchanged (FR-022, FR-037, FR-048); a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 - **Doubles and contracts:** `FixedDiceRoller` and the recording `Observability`; no contract suite (no port added).
 - **Scenario test** (`test/scenarios/`, public API only): a character with a Belt of Giant Strength (storm) and Ring plus Cloak of Protection yields Strength 29 and AC and saves +2 through `derived-stats.md`; a Wand of Magic Missiles emptied to 0 charges rolls its last-charge check; (the AC and saves part is blocked on amendment A-3); a Bag of Holding placed in a Portable Hole destroys both.

@@ -45,8 +45,9 @@ void main() {
       expect(sources.files['lib/srd5e.dart'], 'library;\n');
     });
 
-    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - ignored
-    ///   directories and per-machine files are excluded.
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 and FR-105 -
+    ///   ignored directories and per-machine files are excluded, the
+    ///   `.zcode/` repository root among them (FR-105).
     /// Path: unhappy (false positive)
     test('excludes ignored directories and per-machine files', () {
       writeText('lib/a.dart', 'a');
@@ -55,6 +56,7 @@ void main() {
       writeText('.git/config', 'x');
       writeText('.mutate4dart/copy.dart', 'x');
       writeText('.idea/x.xml', 'x');
+      writeText('.zcode/workflow-runs/run.mjs', 'x');
       writeText('pubspec.lock', 'x');
       writeText('.DS_Store', 'x');
       writeText('lib/a.dart.swp', 'x');

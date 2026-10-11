@@ -37,6 +37,48 @@
 /// stack, and at least one of each cancels to normal); `RollMode.diceCount`
 /// says how many d20s to roll and `RollMode.select` picks the one that is used.
 ///
+/// ## D20 Tests
+///
+/// The `d20_test` domain model. [D20Roll] holds the d20s of one roll under a
+/// [RollMode] — its `natural` is the die the mode keeps and its `keptIndex`
+/// says which one — and `replaceDie` and `applyReroll` return new rolls; a
+/// reroll is a [RerollDecision], the sealed [KeepRoll] or [RerollDie].
+/// [RollModifiers] holds the one ability modifier, the optional Proficiency
+/// Bonus and any number of other modifiers; its `total` is their kernel sum.
+/// [DifficultyClass] and [ArmorClass] are the two target numbers
+/// (`DifficultyClass.veryEasy` ... `nearlyImpossible` are the Typical
+/// Difficulty Classes). [D20TestKind] names the three kinds of D20 Test,
+/// [D20TestOutcome] their outcome and [ForcedFailureReason] why a check or
+/// save fails without a roll.
+///
+/// The resolved outcome of a test is a value: [CheckResult] or
+/// [AttackRollResult] carries the roll, the modifiers, the total, the target
+/// and the outcome (the attack result also `isCriticalHit` and
+/// `criticalRange`, and `hit`), and [ForcedFailureResult] marks a failure
+/// without a roll. Resolve them with the static members
+/// `CheckResult.resolve`, `AttackRollResult.resolve` and
+/// `ForcedFailureResult.of` — or with the pure const [D20TestResolver]
+/// service the static members delegate to, which accepts a rerolled or
+/// replaced roll and re-resolves after an adjustment with `adjustedBy`. A
+/// natural 20 hits and is a Critical Hit and a natural 1 misses regardless
+/// of modifiers or the AC ("Rolling 20 or 1", SRD 5.2.1, p. 7); attack rolls
+/// only.
+///
+/// ## Resolving a D20 Test
+///
+/// [ResolveD20Test] resolves one D20 Test for you: give it a [DiceRoller] and
+/// an optional [Observability], then call it with a [D20TestCommand] — an
+/// [AbilityCheckCommand] or [SavingThrowCommand] with a `DifficultyClass`, or
+/// an [AttackRollCommand] with an `ArmorClass` — whose attempt is a
+/// [RollAttempt] (the `RollModifiers` and the Advantage and Disadvantage
+/// circumstances), a [ChooseToFail] (saving throws only) or an
+/// [AutomaticFailure]. It makes one dice request sized by the resolved mode
+/// and returns a [ResolveD20TestResult]: a `ResolveD20TestRolledCheck`, a
+/// `ResolveD20TestRolledAttack` or a `ResolveD20TestForcedFailure`, carrying
+/// the command's ability label, the domain result and the typed target. It
+/// emits the signals named by [D20TestSignals] and catalogued in
+/// `doc/observability/signals.md`.
+///
 /// ## Abilities
 ///
 /// [Ability] names the six abilities. An [AbilityScore] is a whole number from
@@ -78,6 +120,37 @@
 /// doubles for tests are in `package:srd5e/testing.dart`.
 library;
 
+export 'src/d20_test/d20_test.dart'
+    show
+        AbilityCheckCommand,
+        ArmorClass,
+        AttackRollCommand,
+        AttackRollResult,
+        AutomaticFailure,
+        CheckAttempt,
+        CheckResult,
+        ChooseToFail,
+        D20Roll,
+        D20TestCommand,
+        D20TestKind,
+        D20TestOutcome,
+        D20TestResolver,
+        D20TestSignals,
+        DifficultyClass,
+        ForcedFailureReason,
+        ForcedFailureResult,
+        KeepRoll,
+        ResolveD20Test,
+        ResolveD20TestForcedFailure,
+        ResolveD20TestResult,
+        ResolveD20TestRolledAttack,
+        ResolveD20TestRolledCheck,
+        RerollDecision,
+        RerollDie,
+        RollAttempt,
+        RollModifiers,
+        SaveAttempt,
+        SavingThrowCommand;
 export 'src/shared_kernel/ability/ability.dart' show Ability;
 export 'src/shared_kernel/ability/ability_score.dart'
     show AbilityModifier, AbilityScore;

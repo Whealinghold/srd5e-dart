@@ -283,6 +283,7 @@ Doubles: fixed `DiceRoller`, recording `Observability`. No contract suite. Table
 | FR-059 to FR-068 | application | variant sets, roller failure propagation (set unchanged), determinism with both `Observability` types, event kinds and order, spans and class mapping, counters once, no id in any attribute, no log at `INFO` |
 | FR-069 to FR-072 | architecture, unit | `signals.md` lists the new signals; import scan; barrel scan for names and dartdoc; `tryCreate` never throws and matches constructors |
 | scenario | scenario | public API only: a Hunting Trap is set, a creature steps on it, fails the save, is caught, fails then passes the escape check; Caltrops entered twice in one turn; Manacles bound to a Grappled creature, Disadvantage merged with conditions; Net thrown at a Large creature, destroyed through `ApplyDamageToObject` |
+| errors-and-results.md FR-031, FR-034, FR-051 | application | The roller failure of FR-061 propagates unchanged with no partial result; a recorded failure sets `error.type` from the exception's `errorType` getter; a leaked non-`Srd5eException` propagates uncounted. |
 
 - **Mutation testing:** `lib/src/combat/domain/gear`, `--threshold 80` (`doc/rules/testing.md` §8); the boundary rows kill comparison mutants and the once-per-turn rows kill ledger-key mutants.
 - **Not covered:** none; every FR appears above.

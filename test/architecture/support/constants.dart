@@ -152,6 +152,8 @@ const Map<String, Set<String>> sharedAttributeValueSets = {
   'srd5e.d20_test.kind': {'ability_check', 'saving_throw', 'attack_roll'},
   'srd5e.d20_test.roll_mode': {'normal', 'advantage', 'disadvantage'},
   'srd5e.d20_test.critical_hit': {'true', 'false'},
+  'srd5e.d20_test.roller_failure': {'unavailable', 'invalid_result'},
+  'srd5e.d20_test.forced_failure_reason': {'chosen_to_fail', 'automatic'},
 };
 
 /// The paths `NOTICE.md` must cover while bundled content is present (FR-079).

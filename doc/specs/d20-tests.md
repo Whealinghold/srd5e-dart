@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | draft |
+| Status | implemented |
 | Context | `d20_test` |
 | Roadmap phase | 1 |
 | Depends on | `errors-and-results.md`, `modifiers-and-advantage.md` |
@@ -419,8 +419,9 @@ resolve-d20-test-use-case.md.
 
 - `D20Roll`: `mode`, `dice` (unmodifiable, in the order rolled), `natural`,
   `keptIndex` (FR-058); `replaceDie` (FR-012) and `applyReroll` (FR-059) return
-  new rolls. The constructor copies the list (FR-068) and validates count and
-  range through `select` (FR-009 to FR-011). No replaced state (FR-067).
+  new rolls. The constructor copies the list (FR-068), pre-validates count and
+  range itself and then calls `select` for the kept die (FR-009 to FR-011,
+  D-23). No replaced state (FR-067).
 - `RerollDecision`: sealed `KeepRoll` | `RerollDie(dieIndex)`.
 - `RollModifiers`: `ability` (required), `proficiencyBonus` (`Modifier?`),
   `others` (unmodifiable); `total` is the kernel sum (FR-016 to FR-020, FR-061).
@@ -449,11 +450,16 @@ result.
 exceptions. No `Srd5eException` is thrown by the domain. Every `ArgumentError`
 follows errors-and-results.md FR-027: it carries the argument `name` (`dice`,
 `index`, `value`, `newValue`, `kind`, `reason`) and `invalidValue`; tests assert
-both, never the message. A `D20Roll` re-throws the kernel's `select` error with
-`name` `dice`, not `rolled`. `ArgumentError` covers an invalid `D20Roll`, a bad
-`replaceDie` or `applyReroll`, a `forcedFailure` combination without an SRD
-rule, and `resolveCheck` with an attack roll (FR-009, FR-010, FR-014, FR-052,
-FR-059, FR-062): programmer errors, as values come from callers.
+both, never the message. A `D20Roll` throws its own `ArgumentError` with `name`
+`dice` — not the kernel's `select` error with `name` `rolled`: it pre-validates
+the count and the 1 to 20 range before calling `select`, because re-throwing
+the kernel error would mean catching an `Error`, which the guardrails forbid
+(errors-and-results.md FR-030 and FR-046, check E4; decision D-23). The
+observable contract is what the tables pin: an `ArgumentError` named `dice`
+carrying the list as `invalidValue`. `ArgumentError` covers an invalid
+`D20Roll`, a bad `replaceDie` or `applyReroll`, a `forcedFailure` combination
+without an SRD rule, and `resolveCheck` with an attack roll (FR-009, FR-010,
+FR-014, FR-052, FR-059, FR-062): programmer errors, as values come from callers.
 
 ## 6. Interface
 
@@ -578,6 +584,16 @@ No open questions. Settled decisions cited elsewhere:
 - D-12: reroll operations are here (FR-012 to FR-015, FR-059, FR-067); the
   Inspiration slot and mechanics are elsewhere (shared-types-and-ownership.md
   FR-002, FR-010, FR-048).
+- D-23: at construction `D20Roll` pre-validates the dice count and the 1 to 20
+  range itself and throws its own `ArgumentError` (name `dice`), instead of
+  re-throwing the kernel's `select` error (name `rolled`): forwarding that
+  error under a new name would mean catching an `Error`, which
+  errors-and-results.md FR-030 and FR-046 (check E4) forbid. `select` stays the
+  sole authority for which die is kept (FR-009's first sentence and the table
+  rows are unaffected: the error type, the name and the `invalidValue` are as
+  the tables pin them). The mechanism sentence of FR-009 and FR-014 keeps its
+  original wording; this decision records what the implemented code does and
+  why.
 
 ## 10. Changelog impact
 
