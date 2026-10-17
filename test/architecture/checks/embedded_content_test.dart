@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 
+import '../../../tool/generate_embedded_data.dart';
 import '../support/real_repository.dart';
 import '../support/source_set.dart';
 import '../support/violation.dart';
@@ -11,17 +12,18 @@ final SourceSet _repository = realRepository;
 const Timeout _budget = Timeout(Duration(seconds: 10));
 
 void main() {
-  /// Requirement: doc/specs/architecture-guardrails.md FR-078 - the drift
-  ///   check on the real repository. The generator in `tool/` does not exist
-  ///   yet, so the real wiring passes `null` (plan decision D3) and the check
-  ///   passes vacuously until the change that adds it imports it.
-  /// Path: happy
-  test(
-    'FR-078: embedded libraries match the generator (null until tool/ has one)',
-    () {
-      final violations = checkEmbeddedContent(_repository, null);
-      expect(violations, isEmpty, reason: '\n${formatViolations(violations)}');
-    },
-    timeout: _budget,
-  );
+  /// Requirement: doc/specs/architecture-guardrails.md FR-078 - running the
+  ///   real generator (`tool/generate_embedded_data.dart`,
+  ///   content-schema-and-decoder.md FR-121) on the texts of
+  ///   `data/srd_5_2_1/*.json` reproduces every committed library under
+  ///   `lib/src/content/data/` byte for byte, with none missing and none
+  ///   extra (content-schema-and-decoder.md FR-123).
+  /// Path: unhappy (state error)
+  test('FR-078: embedded libraries match the real generator', () {
+    final violations = checkEmbeddedContent(
+      _repository,
+      generateEmbeddedLibraries,
+    );
+    expect(violations, isEmpty, reason: '\n${formatViolations(violations)}');
+  }, timeout: _budget);
 }

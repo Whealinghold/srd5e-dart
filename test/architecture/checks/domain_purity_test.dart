@@ -15,9 +15,13 @@ void _expectNone(List<Violation> violations) {
 }
 
 void main() {
-  /// Requirement: doc/specs/architecture-guardrails.md FR-015 - no domain/
+  /// Requirement: doc/specs/architecture-guardrails.md FR-015 - no
+  ///   domain/
   ///   file imports application/, adapters/, shared_ports/, dart:async or
-  ///   dart:developer (architecture.md section 9, bullet 2).
+  ///   dart:developer (architecture.md section 9, bullet 2); the same scan
+  ///   enforces doc/specs/content-schema-and-decoder.md FR-148 and
+  ///   doc/specs/content-source-port.md FR-033 for the content identity
+  ///   and lookup types.
   /// Path: happy
   test(
     'FR-015: no domain file imports an outer layer or an async library',
@@ -25,9 +29,12 @@ void main() {
     timeout: _budget,
   );
 
-  /// Requirement: doc/specs/architecture-guardrails.md FR-016 - no domain/
+  /// Requirement: doc/specs/architecture-guardrails.md FR-016 - no
+  ///   domain/
   ///   file contains async, await, Future, Stream or their relatives
-  ///   (architecture.md section 9, bullet 2).
+  ///   (architecture.md section 9, bullet 2); the same scan enforces
+  ///   doc/specs/content-schema-and-decoder.md FR-148 and
+  ///   doc/specs/content-source-port.md FR-033.
   /// Path: happy
   test(
     'FR-016: no domain file uses async code',

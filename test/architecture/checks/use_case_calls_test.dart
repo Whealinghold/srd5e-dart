@@ -25,8 +25,11 @@ void main() {
     expect(useCaseClasses(_repository), isA<List<UseCaseClass>>());
   }, timeout: _budget);
 
-  /// Requirement: doc/specs/architecture-guardrails.md FR-097 - no file under
-  ///   application/ or domain/ mentions a use case declared in another file.
+  /// Requirement: doc/specs/architecture-guardrails.md FR-097 - no file
+  ///   under
+  ///   application/ or domain/ mentions a use case declared in another
+  ///   file; the same scan enforces doc/specs/content-schema-and-decoder.md
+  ///   FR-131 - LoadContentSet calls no other use case.
   /// Path: happy
   test(
     'FR-097: no use case calls another use case',

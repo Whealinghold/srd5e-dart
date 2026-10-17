@@ -23,6 +23,23 @@ jobs:
           path: coverage/lcov.info
       - run: dart pub publish --dry-run
 
+  # The web test run of FR-099 (content-schema-and-decoder.md): the decoder
+  # tests in test/content/adapters must pass on Chrome too, because number
+  # handling differs on the web (FR-021). A failure blocks the build.
+  chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      - run: dart pub get
+      - run: dart test -p chrome test/content/adapters
+
   # Mutation testing (doc/rules/testing.md section 8). Separate from `check`
   # so a slow or flaky run cannot block format, analyze and tests. Pull
   # requests only, read-only token, no secrets. mutate4dart 0.12.2 accepts
@@ -50,4 +67,5 @@ jobs:
           dart pub global run mutate4dart
           lib/src/shared_kernel lib/src/shared_ports
           lib/src/d20_test/domain
+          lib/src/content/domain
           --diff-base "origin/$BASE_REF" --threshold 80 --jobs 2

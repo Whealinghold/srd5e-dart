@@ -180,3 +180,11 @@ docker run --rm -v "$PWD":/app -w /app dart:stable sh -c \
 ```
 
 Coverage is written to `coverage/lcov.info`. Mutation testing (`mutate4dart`, required for changed `domain/` code) has its own command in `doc/rules/testing.md` §8.
+
+Chrome run for the decoder tests (content-schema-and-decoder.md FR-099; the decoder tests in `test/content/adapters/` must pass on Chrome, because number handling differs on the web). Build the Chrome-capable image once, then run the web target:
+
+```sh
+docker build --rm -t srd5e-dart-chrome -f tool/docker/Dockerfile.chrome . && \
+docker run --rm -v "$PWD":/app -w /app srd5e-dart-chrome sh -c \
+  "dart pub get && dart test -p chrome test/content/adapters"
+```

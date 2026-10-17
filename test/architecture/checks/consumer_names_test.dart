@@ -24,9 +24,12 @@ void main() {
     expect(_repository.files.keys, containsAll(denylistSourcePaths));
   }, timeout: _budget);
 
-  /// Requirement: doc/specs/architecture-guardrails.md FR-025 - no file under
+  /// Requirement: doc/specs/architecture-guardrails.md FR-025 - no file
+  ///   under
   ///   lib/ names a consuming project or the hosting organisation, in its
-  ///   path, comments or code (architecture.md section 9, bullet 11).
+  ///   path, comments or code (architecture.md section 9, bullet 11); the
+  ///   same scan is doc/specs/content-source-port.md FR-034's mechanical
+  ///   consumer-name scan over `lib/`.
   /// Path: happy
   test(
     'FR-025: no file under lib/ names a consumer',

@@ -67,6 +67,20 @@ strings under `lib/src/content/data/`; one decoder serves bundled and
 host-supplied JSON; a drift test regenerates and fails on any diff
 (shared-types-and-ownership.md FR-030 to FR-032).
 
+**Status: done (2026-10-17).** All eleven PRs of
+[plans/plan-phase-2.md](plans/plan-phase-2.md) are in: the `content` context
+(identity types, vocabulary, typed ids, entry types, decoder, `LoadContentSet`
+with its six signals, the generator with its drift check, the `ContentSource`
+port with its adapters, doubles and contract suites), the `CLN-` licensing
+checks with `NOTICE.md` activated, and the thin slice of bundled SRD 5.2.1
+data (four species, the Wizard, twelve spells in three documents) with its
+oracle fixtures, data pins, telemetry pin and scenario. The four content specs
+(`content-schema-and-decoder`, `content-source-port`,
+`content-licensing-and-notice`, `content-thin-slice`) are `implemented` and
+pass the FR-055 coverage check. Verbatim fidelity of the bundled texts to the
+PDF (content-thin-slice.md FR-079) is recorded for human review in the PR
+checklist.
+
 ## Phase 3: `character` context
 
 - Ability modifiers, Proficiency Bonus, level, derived stats (AC, HP, saves,

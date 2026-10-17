@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | draft |
+| Status | implemented |
 | Context | `content` |
 | Roadmap phase | 2 |
 | Depends on | `errors-and-results.md`, `content-schema-and-decoder.md` |

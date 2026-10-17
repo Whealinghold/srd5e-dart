@@ -154,6 +154,31 @@ const Map<String, Set<String>> sharedAttributeValueSets = {
   'srd5e.d20_test.critical_hit': {'true', 'false'},
   'srd5e.d20_test.roller_failure': {'unavailable', 'invalid_result'},
   'srd5e.d20_test.forced_failure_reason': {'chosen_to_fail', 'automatic'},
+  'srd5e.content.kind': {
+    'species',
+    'background',
+    'character_class',
+    'feat',
+    'equipment',
+    'spell',
+    'magic_item',
+    'monster',
+    'poison',
+    'trap',
+    'contagion',
+  },
+  'srd5e.content.problem_kind': {
+    'syntax',
+    'unsupported_version',
+    'missing_field',
+    'unknown_field',
+    'wrong_type',
+    'out_of_range',
+    'invalid_value',
+    'duplicate',
+    'unresolved_reference',
+    'constraint_violation',
+  },
 };
 
 /// The paths `NOTICE.md` must cover while bundled content is present (FR-079).

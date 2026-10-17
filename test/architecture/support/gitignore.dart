@@ -12,7 +12,9 @@ final class GitignoreRules {
   /// Parses the text of an ignore file.
   factory GitignoreRules.parse(String text) {
     final rules = <_Rule>[];
+    var lineNumber = 0;
     for (final raw in text.split('\n')) {
+      lineNumber++;
       var line = raw.endsWith('\r') ? raw.substring(0, raw.length - 1) : raw;
       line = _trimTrailingSpaces(line);
       if (line.isEmpty || line.startsWith('#')) continue;
@@ -36,6 +38,7 @@ final class GitignoreRules {
       final expression = anchored ? '^$body\$' : '^(?:.*/)?$body\$';
       rules.add(
         _Rule(
+          line: lineNumber,
           negated: negated,
           directoryOnly: directoryOnly,
           pattern: RegExp(expression),
@@ -66,14 +69,46 @@ final class GitignoreRules {
     }
     return excluded;
   }
+
+  /// The 1-based line of the rule that finally makes [path] excluded, by the
+  /// same walk [excludes] performs (ancestors first, then the path itself);
+  /// null when [path] is not excluded.
+  int? excludedByLine(String path, {bool isDirectory = false}) {
+    final segments = path.split('/').where((s) => s.isNotEmpty).toList();
+    int? deciding;
+    for (var i = 1; i < segments.length; i++) {
+      final line = _decidingLine(segments.take(i).join('/'), true);
+      if (line != null) deciding = line;
+    }
+    final own = _decidingLine(segments.join('/'), isDirectory);
+    if (own != null) deciding = own;
+    return deciding;
+  }
+
+  int? _decidingLine(String path, bool isDirectory) {
+    var excluded = false;
+    int? line;
+    for (final rule in _rules) {
+      if (rule.directoryOnly && !isDirectory) continue;
+      if (rule.pattern.hasMatch(path)) {
+        excluded = !rule.negated;
+        line = excluded ? rule.line : null;
+      }
+    }
+    return excluded ? line : null;
+  }
 }
 
 final class _Rule {
   const _Rule({
+    required this.line,
     required this.negated,
     required this.directoryOnly,
     required this.pattern,
   });
+
+  /// The 1-based line of the pattern in the parsed text.
+  final int line;
 
   final bool negated;
   final bool directoryOnly;

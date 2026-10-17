@@ -13,11 +13,22 @@
 ///   [ArgumentError] or [StateError] on misuse (a bad span or instrument name,
 ///   an unsupported attribute value, a write to a span that has ended), by
 ///   design, so a mistake in your code shows up in your tests.
+/// * [FakeContentSetDecoder]: a scriptable, recording `ContentSetDecoder`
+///   for testing code that loads content; it knows nothing about JSON. Its
+///   scripts hold the `ContentDecodeResult` values `package:srd5e/srd5e.dart`
+///   exports.
+///
+/// * [FakeContentSource]: a scriptable, recording `ContentSource` over the
+///   entries you give it — answer from its in-memory catalogue like the real
+///   one, or script `ContentSourceException` failures for lookup, listKind
+///   or both, and read the recorded `ContentQuery` of every request.
 ///
 /// Import this library from tests only.
 library;
 
 export 'src/testing/callback_dice_roller.dart' show CallbackDiceRoller;
+export 'src/testing/fake_content_set_decoder.dart' show FakeContentSetDecoder;
+export 'src/testing/fake_content_source.dart' show FakeContentSource;
 export 'src/testing/fixed_dice_roller.dart' show FixedDiceRoller;
 export 'src/testing/recording_logger.dart' show LogRecord, RecordingLogger;
 export 'src/testing/recording_meter.dart'

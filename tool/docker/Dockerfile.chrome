@@ -1,0 +1,24 @@
+# A Chrome-capable image for the web test run of FR-099
+# (doc/specs/content-schema-and-decoder.md): `dart test -p chrome
+# test/content/adapters`. Built from the same dart:stable image every other
+# Dart command uses (AGENTS.md, "Commands"), with Chromium and the flags a
+# root container needs. Build it once and run the local command from
+# AGENTS.md against it:
+#
+#   docker build -t srd5e-dart-chrome -f tool/docker/Dockerfile.chrome .
+#
+FROM dart:stable
+
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends \
+      chromium \
+      fonts-liberation \
+      libnss3-tools \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -s /usr/bin/chromium /usr/local/bin/google-chrome
+
+# The test runner looks up the `google-chrome` name on the path (package:test
+# reads no CHROME_PATH); the symlink above answers it with Debian's
+# chromium. The browser is started with --no-sandbox (see dart_test.yaml),
+# which is what a root container needs.
+ENV CHROME_PATH=/usr/bin/chromium

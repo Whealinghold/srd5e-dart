@@ -55,6 +55,42 @@ throws the `Exception` it is given, and the suite then checks that your adapter
 surfaces it as `DiceRollerException(unavailable)` with the same `cause` and
 `causeStackTrace` (wrap the backend call with `wrapPortFailure`).
 
+## Content sources
+
+Content reaches the rules through the `ContentSource` port
+(`package:srd5e/srd5e.dart`):
+
+- **Lookup:** `source.lookup(key)` returns a sealed `ContentLookup` — a
+  `ContentFound` carrying the entry, or a `ContentNotFound` carrying the
+  requested `ContentKey` (and its `missing` detail). Absence is a result,
+  never a throw. `source.listKind(kind)` returns every entry of one kind,
+  ordered by id; an empty list when there is none. Both lists are
+  unmodifiable.
+- **Adapters** (`package:srd5e/adapters.dart`): `InMemoryContentSource`
+  serves an in-memory list of entries; `BundledContentSource` serves the
+  embedded SRD content documents and throws `BundledContentInvalid` when the
+  bundle does not decode or fails cross-reference validation.
+- **Failures:** a backend that fails completes the future with a
+  `ContentSourceException` (`errorType` `content_source_exception`) carrying
+  the `ContentQuery` asked, the cause and its stack trace. Wrap your backend
+  call with `wrapPortFailureAsync`.
+- **Test doubles** (`package:srd5e/testing.dart`): `FakeContentSource`
+  answers from an in-memory catalogue and can be scripted to fail, recording
+  every request.
+
+### Testing your own `ContentSource`
+
+The contract suite for the port is
+`test/contract/content_source_contract.dart`. It is not exported, because it
+needs `package:test`. Copy it into your tests and run
+`contentSourceContractChecks(create: ..., createFailing: ...)` against your
+adapter — `create` builds it from arbitrary entries, and the optional
+`createFailing` builds it over a backend that throws the `Exception` it is
+given, so the suite can check that your adapter surfaces it as
+`ContentSourceException` with the same cause. For a source backed by a fixed
+fixture, use `contentSourceReadOnlyChecks(source: ..., expectedEntries: ...)`.
+A failed check throws `ContentSourceContractViolation` naming the check.
+
 ## Ability scores
 
 `Ability` names the six abilities. An `AbilityScore` is a whole number from 1 to
@@ -148,6 +184,12 @@ docker run --rm -v "$PWD":/app -w /app dart:stable sh -c \
   the Creative Commons Attribution 4.0 International License. The required
   attribution is in [NOTICE.md](NOTICE.md). Nothing outside the SRD is
   included, and Wizards' trademarks are not used.
+
+This work includes material from the System Reference Document 5.2.1 (“SRD
+5.2.1”) by Wizards of the Coast LLC, available at
+https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative
+Commons Attribution 4.0 International License, available at
+https://creativecommons.org/licenses/by/4.0/legalcode.
 
 This package is compatible with fifth edition. It is independent and is not
 published, endorsed or approved by Wizards of the Coast.

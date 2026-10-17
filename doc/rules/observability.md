@@ -216,6 +216,14 @@ Rules:
   `srd5e.d20_test.critical_hit` is `true` or `false` (attack rolls only);
   `srd5e.d20_test.roller_failure` is `unavailable` or `invalid_result`;
   `srd5e.d20_test.forced_failure_reason` is `chosen_to_fail` or `automatic`;
+  `srd5e.content.kind` is the snake_case of a registered `ContentKind`
+  (`species`, `background`, `character_class`, `feat`, `equipment`, `spell`,
+  `magic_item`, `monster`, `poison`, `trap`, `contagion`; the set is bounded
+  by the content revision table); `srd5e.content.problem_kind` is the
+  snake_case of a `ContentProblemKind` (`syntax`, `unsupported_version`,
+  `missing_field`, `unknown_field`, `wrong_type`, `out_of_range`,
+  `invalid_value`, `duplicate`, `unresolved_reference`,
+  `constraint_violation`);
   `error.type` is one constant per `Srd5eException` subtype, the snake_case of
   the subtype name, defined in `errors-and-results.md`, and is set only for a
   thrown subtype, never for a returned failure result. A new value for an
@@ -418,7 +426,7 @@ fully automated; they are enforced in review (§2).
 
 ## Read receipt
 
-RULE-TAG: `observability-7c1f49d2e08a`
+RULE-TAG: `observability-4f9c28b17ae3`
 
 This tag proves you read this document in this session. Quote it verbatim as
 required by `AGENTS.md`. Do not copy it anywhere else. Whoever edits this

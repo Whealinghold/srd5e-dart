@@ -105,8 +105,9 @@ Map<String, String> stubEmbeddedGenerator(Map<String, String> dataFiles) {
 }
 
 /// The registry entry: FR-078 evaluated with [stubEmbeddedGenerator], so the
-/// FR-005 meta-test can exercise a violating fixture. The real-repository
-/// test passes `null` (plan decision D3) until `tool/` has the generator.
+/// FR-005 meta-test can exercise a violating fixture whose expected output is
+/// trivial to write. The real-repository test passes the real generator
+/// (`tool/generate_embedded_data.dart`, wired in the change that added it).
 const Map<String, List<Violation> Function(SourceSet)> embeddedContentChecks = {
   'FR-078': _checkWithStub,
 };

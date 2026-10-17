@@ -1,0 +1,9 @@
+# The Chrome run of FR-099 (doc/specs/content-schema-and-decoder.md,
+# `dart test -p chrome test/content/adapters`) runs in containers and CI as
+# root; Chromium refuses to run its sandbox as root, so the browser is
+# started with --no-sandbox. Harmless on a VM or CI runner, where the
+# default flag set of the runner would not start a root browser either.
+override_platforms:
+  chrome:
+    settings:
+      arguments: --no-sandbox

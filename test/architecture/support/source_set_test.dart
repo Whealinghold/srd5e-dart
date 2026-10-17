@@ -241,16 +241,90 @@ void main() {
       expect(sources.unreadable['lib/bad.dart'], contains('UTF-8'));
     });
 
-    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - a symlink is
-    ///   not a regular file and is not followed or listed.
-    /// Path: unhappy (boundary)
-    test('a symbolic link is not read', () {
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - a symlinked
+    ///   file is read through its target and listed under the link's own
+    ///   path, so a mutation-testing shadow workspace (which mirrors every
+    ///   unmutated file as a symlink) yields the same snapshot as the real
+    ///   tree.
+    /// Path: happy
+    test('a symlinked file is read through and keyed by its link path', () {
       writeText('lib/a.dart', 'a');
       Link('${root.path}/lib/link.dart').createSync('${root.path}/lib/a.dart');
 
       final sources = SourceSet.load(root);
 
+      expect(sources.files, {'lib/a.dart': 'a', 'lib/link.dart': 'a'});
+    });
+
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - a symlinked
+    ///   directory is walked and its files are listed under the link's path,
+    ///   so a shadow workspace's mirrored directories are part of the
+    ///   snapshot. The target sits under a root-excluded directory, so the
+    ///   only path to it is the link.
+    /// Path: happy
+    test('a symlinked directory is followed', () {
+      writeText('.dart_tool/real/data/set.json', '{}');
+      Link('${root.path}/data').createSync('${root.path}/.dart_tool/real/data');
+
+      final sources = SourceSet.load(root);
+
+      expect(sources.files, {'data/set.json': '{}'});
+    });
+
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - the walk
+    ///   terminates when a directory link points back at one of its own
+    ///   ancestors: the link is followed once (its subtree listed under the
+    ///   link's path) and the cyclic re-entry is cut.
+    /// Path: unhappy (failure)
+    test('a symlink loop does not hang the loader', () {
+      writeText('real/data/set.json', '{}');
+      Link('${root.path}/real/data/loop').createSync('${root.path}/real');
+
+      final sources = SourceSet.load(root);
+
+      expect(sources.files.keys.toList()..sort(), [
+        'real/data/loop/data/set.json',
+        'real/data/set.json',
+      ]);
+    });
+
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - a link
+    ///   with no file or directory behind it is skipped: it has no content
+    ///   to keep and is not reported unreadable (nothing was read).
+    /// Path: unhappy (boundary)
+    test('a dangling link is skipped', () {
+      writeText('lib/a.dart', 'a');
+      Link(
+        '${root.path}/lib/dangling.dart',
+      ).createSync('${root.path}/lib/missing.dart');
+
+      final sources = SourceSet.load(root);
+
       expect(sources.files.keys, ['lib/a.dart']);
+      expect(sources.unreadable, isEmpty);
+      expect(sources.binaryPaths, isEmpty);
+    });
+
+    /// Requirement: doc/specs/architecture-guardrails.md FR-002 - the root
+    ///   directory exclusions apply to a symlinked directory at the root
+    ///   too, while a nested directory of the same name stays in the set,
+    ///   reached directly or through a link.
+    /// Path: unhappy (false positive)
+    test('a symlinked root directory with an excluded name is skipped', () {
+      writeText('nested/coverage/lcov.info', 'y');
+      writeText('lib/keep.dart', 'a');
+      Link('${root.path}/coverage').createSync('${root.path}/nested/coverage');
+      Link(
+        '${root.path}/lib/nested',
+      ).createSync('${root.path}/nested/coverage');
+
+      final sources = SourceSet.load(root);
+
+      expect(sources.files.keys.toList()..sort(), [
+        'lib/keep.dart',
+        'lib/nested/lcov.info',
+        'nested/coverage/lcov.info',
+      ]);
     });
   });
 

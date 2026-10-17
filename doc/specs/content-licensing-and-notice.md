@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | draft |
+| Status | implemented |
 | Context | `content` |
 | Roadmap phase | 0 |
 | Depends on | `shared-types-and-ownership.md` |
@@ -377,10 +377,10 @@ FR-002 and FR-005) are met in those specs.
 - **Doubles and contract suites:** none; no port.
 - **Mutation testing:** not applicable (no `domain/` code); the self-test pairs
   are the negative cases.
-- **Deliberately not covered:** FR-023, FR-030, FR-033 by script (review only),
-  and FR-017's "is this a Wizards logo" question (the extension scan is the
-  mechanical stand-in). The embed drift check is shared-types-and-ownership.md
-  FR-032's.
+Deliberately not covered: FR-023 - bundled data must not contain content from outside SRD 5.2.1; not decidable by script, enforced by review (citation traceability via content-schema-and-decoder.md FR-090).
+Deliberately not covered: FR-030 - reused SRD text stays faithful to the source; review only, with the same citation traceability.
+Deliberately not covered: FR-033 - SRD text in tests lives only under `test/fixtures/srd/`; not decidable beyond FR-008, review only.
+Deliberately not covered: FR-017 - only partially: whether an image is a Wizards logo cannot be tested; the extension scan is the mechanical stand-in. The embed drift check is shared-types-and-ownership.md FR-032's.
 
 ## 9. Open questions and decisions
 

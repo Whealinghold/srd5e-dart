@@ -1,3 +1,8 @@
+import 'package:srd5e/src/content/application/ports/content_source.dart';
+import 'package:srd5e/src/content/domain/content_id.dart';
+import 'package:srd5e/src/content/domain/content_key.dart';
+import 'package:srd5e/src/content/domain/content_kind.dart';
+import 'package:srd5e/src/content/domain/content_query.dart';
 import 'package:srd5e/src/shared_kernel/dice/dice_expression.dart';
 import 'package:srd5e/src/shared_kernel/dice/die.dart';
 import 'package:srd5e/src/shared_ports/dice_roller/dice_roller_exception.dart';
@@ -30,9 +35,8 @@ final class RegisteredException {
 
 /// The concrete subtypes that exist under `lib/src` today.
 ///
-/// `ContentSourceException` ships with `content-source-port.md`. The stage that
-/// adds a subtype appends its entry here, and removes its name from
-/// [pendingSubtypes].
+/// The stage that adds a subtype appends its entry here, and removes its name
+/// from [pendingSubtypes].
 final List<RegisteredException> registeredExceptions = [
   RegisteredException(
     className: 'DiceRollerException',
@@ -44,9 +48,18 @@ final List<RegisteredException> registeredExceptions = [
       causeStackTrace: causeStackTrace,
     ),
   ),
+  RegisteredException(
+    className: 'ContentSourceException',
+    errorType: 'content_source_exception',
+    create: ({cause, causeStackTrace}) => ContentSourceException(
+      ContentLookupQuery(ContentKey(ContentKind.spell, ContentId('sample'))),
+      cause: cause,
+      causeStackTrace: causeStackTrace,
+    ),
+  ),
 ];
 
 /// Subtypes listed in section 7 of `errors-and-results.md` whose owning stage
 /// has not shipped yet (a forward registration). A name here must not be
 /// declared under `lib/` and a name in [registeredExceptions] must not be here.
-const Set<String> pendingSubtypes = {'ContentSourceException'};
+const Set<String> pendingSubtypes = {};

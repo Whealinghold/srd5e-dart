@@ -41,32 +41,26 @@ final class SourceSet {
   };
 
   /// Loads every non-ignored text file under [root].
+  ///
+  /// Symlinks are resolved: a symlinked directory is walked (with a loop
+  /// guard) and a symlinked file is read through, each listed under the
+  /// link's own relative path. A mutation-testing shadow workspace mirrors
+  /// every unmutated file and directory as a symlink
+  /// (`mutate4dart`'s `ShadowWorkspace`), so a snapshot that skipped links
+  /// would make the architecture checks pass vacuously there. A dangling
+  /// link has no file behind it and is skipped (FR-002).
   factory SourceSet.load(Directory root) {
     final files = <String, String>{};
     final unreadable = <String, String>{};
     final binary = <String>[];
-    final rootPath = root.absolute.path;
-    for (final entity in root.absolute.listSync(
-      recursive: true,
-      followLinks: false,
-    )) {
-      if (entity is! File) continue;
-      final relative = entity.path
-          .substring(rootPath.length + 1)
-          .replaceAll(r'\', '/');
-      if (_isExcluded(relative)) continue;
-      final bytes = entity.readAsBytesSync();
-      final head = bytes.length > 8192 ? bytes.sublist(0, 8192) : bytes;
-      if (head.contains(0)) {
-        binary.add(relative);
-        continue;
-      }
-      try {
-        files[relative] = utf8.decode(bytes);
-      } on FormatException catch (e) {
-        unreadable[relative] = 'not valid UTF-8 (offset ${e.offset})';
-      }
-    }
+    _collect(
+      root.absolute.path,
+      '',
+      files,
+      unreadable,
+      binary,
+      visited: <String>{},
+    );
     // Directory listing order is platform-dependent; sort so the snapshot is
     // deterministic (FR-011).
     return SourceSet(
@@ -79,17 +73,105 @@ final class SourceSet {
     );
   }
 
-  static bool _isExcluded(String relative) {
-    final segments = relative.split('/');
-    // Root only (FR-002): a nested `build/` or `coverage/` is checked.
-    if (segments.length > 1 && excludedDirectories.contains(segments.first)) {
-      return true;
+  /// Walks [directoryPath], adding every kept file under the relative
+  /// prefix [prefix]. [visited] holds the canonical paths of the directories
+  /// on the current walk path only, so a symlink loop terminates while the
+  /// same directory reached twice through two links is still walked twice.
+  static void _collect(
+    String directoryPath,
+    String prefix,
+    Map<String, String> files,
+    Map<String, String> unreadable,
+    List<String> binary, {
+    required Set<String> visited,
+  }) {
+    for (final entity in Directory(
+      directoryPath,
+    ).listSync(followLinks: false)) {
+      final name = entity.path
+          .substring(directoryPath.length + 1)
+          .replaceAll(r'\', '/');
+      final relative = prefix.isEmpty ? name : '$prefix/$name';
+      if (entity is Link) {
+        final String resolved;
+        try {
+          resolved = entity.resolveSymbolicLinksSync();
+        } on FileSystemException {
+          continue; // Dangling link: no file behind it (FR-002).
+        }
+        switch (FileSystemEntity.typeSync(resolved)) {
+          case FileSystemEntityType.directory:
+            // Root only (FR-002): a nested `build/` or `coverage/` is
+            // checked, and so is a nested one behind a link.
+            if (prefix.isEmpty && excludedDirectories.contains(name)) {
+              continue;
+            }
+            final canonical = Directory(resolved).absolute.path;
+            if (visited.add(canonical)) {
+              _collect(
+                resolved,
+                relative,
+                files,
+                unreadable,
+                binary,
+                visited: visited,
+              );
+              visited.remove(canonical);
+            }
+          case FileSystemEntityType.file:
+            _addFile(entity.path, relative, files, unreadable, binary);
+          default:
+          // A dangling or special link: no regular file behind it.
+        }
+        continue;
+      }
+      if (entity is Directory) {
+        if (prefix.isEmpty && excludedDirectories.contains(name)) {
+          continue;
+        }
+        _collect(
+          entity.path,
+          relative,
+          files,
+          unreadable,
+          binary,
+          visited: visited,
+        );
+        continue;
+      }
+      if (entity is File) {
+        _addFile(entity.path, relative, files, unreadable, binary);
+      }
     }
-    final name = segments.last;
-    return excludedFiles.contains(name) ||
+  }
+
+  /// Reads one file, keeping its text, or its path in [binary] or
+  /// [unreadable] (FR-002, FR-010).
+  static void _addFile(
+    String path,
+    String relative,
+    Map<String, String> files,
+    Map<String, String> unreadable,
+    List<String> binary,
+  ) {
+    final name = relative.split('/').last;
+    if (excludedFiles.contains(name) ||
         name.endsWith('.swp') ||
         name.endsWith('.swo') ||
-        name.endsWith('~');
+        name.endsWith('~')) {
+      return;
+    }
+    final bytes = File(path).readAsBytesSync();
+    final head = bytes.length > 8192 ? bytes.sublist(0, 8192) : bytes;
+    if (head.contains(0)) {
+      binary.add(relative);
+      return;
+    }
+    try {
+      files[relative] = utf8.decode(bytes);
+    } on FormatException catch (e) {
+      unreadable[relative] = 'not valid UTF-8 (offset ${e.offset})';
+    }
   }
 
   /// Text content by repository-relative path.

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | draft |
+| Status | implemented |
 | Context | `content` |
 | Roadmap phase | Types 2; slice data 2; bulk data 5 |
 | Depends on | `content-schema-and-decoder.md`, `content-source-port.md` |
@@ -562,10 +562,11 @@ FR-063 and FR-064.
 Mutation testing (testing.md §8): no `domain/` code or adapter, so nothing is
 mutated; the pin tables protect the data.
 
-Deliberately not covered: verbatim fidelity beyond pinned phrases (FR-079);
-infrastructure failure of the bundled source (no I/O; content-source-port.md
-tests the contract and FR-061); a `ContentNotFound` signal (none exists,
-section 7).
+Deliberately not covered: FR-079 - verbatim fidelity of the long texts beyond
+the pinned phrases is the human PDF review recorded in the PR checklist, not a
+CI claim (the PDF is not in the repo). Also outside the pins: infrastructure
+failure of the bundled source (no I/O; content-source-port.md tests the
+contract and FR-061) and a `ContentNotFound` signal (none exists, section 7).
 
 ## 9. Open questions and decisions
 

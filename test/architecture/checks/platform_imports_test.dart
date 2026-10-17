@@ -24,7 +24,8 @@ void main() {
     expect(_repository.dartPaths('lib/src/'), isNotEmpty);
   }, timeout: _budget);
 
-  /// Requirement: doc/specs/architecture-guardrails.md FR-013 - no file under
+  /// Requirement: doc/specs/architecture-guardrails.md FR-013 - no file
+  ///   under
   ///   lib/src/ imports Flutter or dart:ui, and dart:io stays in adapters/.
   /// Path: happy
   test(
@@ -42,7 +43,9 @@ void main() {
     timeout: _budget,
   );
 
-  /// Requirement: doc/specs/architecture-guardrails.md FR-014 - no dart:io
+  /// Requirement: doc/specs/architecture-guardrails.md FR-014 - no dart:io;
+  ///   doc/specs/content-schema-and-decoder.md FR-075 - the decoder is a
+  ///   pure function of its input with no dart:io import
   ///   adapter is reachable from a core entry point.
   /// Path: happy
   test(

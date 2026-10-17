@@ -51,7 +51,10 @@ void main() {
 
   /// Requirement: doc/specs/architecture-guardrails.md FR-077 - no barrel or
   ///   core entry point exports a generic variant name, and no exported name
-  ///   is declared twice.
+  ///   is declared twice; the same scan enforces
+  ///   doc/specs/content-schema-and-decoder.md FR-128 and FR-130 - every
+  ///   vocabulary type and typed id is declared exactly once, under
+  ///   content/domain/, and no spec redefines one.
   /// Path: happy
   test(
     'FR-077: no generic variant name and no duplicate exported name',
